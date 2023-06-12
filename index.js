@@ -85,9 +85,9 @@ txt+=`
 
 fs.writeFileSync("./out/"+klass.name+".java", txt);
 
-
-
     });
+
+    // Do moch ma Main
     
     res.send("DINGS");
 });
@@ -125,7 +125,8 @@ function getBezi(bez, dat){
     console.log(bez, bez2);
     
     let txt = "@";
-    txt+= getBeziMult(bez2.mult) + "To" + getBeziMult(bez.mult) + `(mappedBy = "${bez2.name}")`;
+    txt+= getBeziMult(bez2.mult) + "To" + getBeziMult(bez.mult) + `(${getMappedBy(bez, bez2)})`;
+    txt+= getJoinColumns(bez, bez2);
     txt+= `\n\tprivate ${(getBeziMult(bez.mult) == "Many")? "List<"+bez.klasse+">" : bez.klasse} ${bez.name}`+((getBeziMult(bez.mult) == "Many")? " = new ArrayList<>();": ";") + "\n\n\t";
     txt+=`public void set${capitalizeFirstLetter(bez.name)}(${(getBeziMult(bez.mult) == "Many")? "List<"+bez.klasse+">" : bez.klasse} ${bez.name}){
         this.${bez.name} = ${bez.name};
@@ -138,13 +139,54 @@ function getBezi(bez, dat){
 }
 
 function getBeziMult(m1){
-    if(m1?.includes("*")){
+    if(m1.includes("*")){
         return "Many";
-    }else if(m1?.includes("1")){
+    }else if(m1.includes("1")){
         return "One";
     }
 
     return "One";
+}
+
+function getMappedBy(bez, bez2){
+    // OneToMany
+    if(getBeziMult(bez2.mult) == "Many" && getBeziMult(bez.mult) == "One")
+    return `mappedBy = "${bez2.name}"`;
+
+    // ManyToOne
+    if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "Many")
+    return `fetch = FetchType.EAGER`;
+
+    // if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "One") console.log(bez.randomW, bez2.randomW)
+    // OneToOne
+    if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "One" && parseInt(bez2.randomW) > parseInt(bez.randomW))
+    return ``;
+    if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "One" && parseInt(bez2.randomW) < parseInt(bez.randomW))
+    return `mappedBy = "${bez2.name}"`;
+
+    // ManyToMany
+    if(getBeziMult(bez2.mult) == "Many" && getBeziMult(bez.mult) == "Many" && parseInt(bez2.randomW) > parseInt(bez.randomW))
+    return `cascade = CascadeType.PERSIST`;
+    if(getBeziMult(bez2.mult) == "Many" && getBeziMult(bez.mult) == "Many" && parseInt(bez2.randomW) < parseInt(bez.randomW))
+    return `mappedBy = "${bez2.name}"`;
+}
+
+function getJoinColumns(bez, bez2){
+    if(getBeziMult(bez2.mult) == "Many" && getBeziMult(bez.mult) == "Many" && parseInt(bez2.randomW) > parseInt(bez.randomW)){
+        return `
+    @JoinTable (
+        name = "${bez.klasse.toUpperCase()}_${bez2.klasse.toUpperCase()}",
+        joinColumns = {@JoinColumn(name = "${bez.klasse.toLowerCase()}OID")},
+        inverseJoinColumns = {@JoinColumn(name = "${bez2.klasse.toLowerCase()}OID")}
+    )`;
+    }
+
+    if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "One" && parseInt(bez2.randomW) > parseInt(bez.randomW)){
+        return `
+    @JoinColumn(name = "${bez.klasse.toLowerCase()}OID")`;
+    }
+
+    return "";
 }
 
 app.listen(settings.port, () => console.log("Listening to port "+settings.port));

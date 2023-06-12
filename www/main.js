@@ -41,7 +41,7 @@ document.getElementById("genClasses").addEventListener("click", () => {
 
             if(val.className.startsWith("bezi")){
                 console.log(val)
-                data[data.length-1].bezi.push({target:val.getAttribute("data-bezit"), bezi:val.getAttribute("data-bezi"), klasse:val.childNodes[1].innerText, name:val.childNodes[3].innerText, mult:val.childNodes[5].innerText});
+                data[data.length-1].bezi.push({target:val.getAttribute("data-bezit"), bezi:val.getAttribute("data-bezi"), klasse:val.childNodes[1].innerText, name:val.childNodes[3].innerText, mult:val.childNodes[5].innerText, randomW: Math.floor(Math.random() * 10_000_000)});
             }
         })
     })
