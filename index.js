@@ -44,17 +44,7 @@ public class ${klass.name} ${(klass.vererb == undefined) ? "" : "extends "+klass
 
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long oid;
-
-    public Long getOid() {
-        return oid;
-    }
-
-    public void setOid(Long oid) {
-        this.oid = oid;
-    }
+    ${genOID(klass)}
 
 `;
 
@@ -272,6 +262,23 @@ function getVererbs(klass, dat){
     });
 
     return txt;
+}
+
+function genOID(klass){
+    if(klass.vererb != undefined)
+    return "";
+    
+    return `@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long oid;
+
+    public Long getOid() {
+        return oid;
+    }
+
+    public void setOid(Long oid) {
+        this.oid = oid;
+    }`;
 }
 
 app.listen(settings.port, () => console.log("Listening to port "+settings.port));
