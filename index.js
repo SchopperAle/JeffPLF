@@ -122,7 +122,7 @@ public class Main {
 
     dat.forEach((klass) => {
         console.log(klass);
-        klass.bezi.forEach((bez) => {
+        klass.bezi?.forEach((bez) => {
             if(bez.mult.startsWith("1")){
                 txt+=`${klass.name.toLowerCase()}1.set${capitalizeFirstLetter(bez.name)}(${bez.klasse.toLowerCase()}1);
         `;
