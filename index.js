@@ -177,7 +177,7 @@ function genRandAtt(att){
         return Math.floor(Math.random() * 10_000);
     }
     if(att.type == "date"){
-        return `new Timestamp(${Math.floor(Math.random() * 1_686_553_410_116)})`;
+        return `new Timestamp(${Math.floor(Math.random() * 2147483645)})`;
     }
 }
 
@@ -224,11 +224,11 @@ function getBeziMult(m1){
 function getMappedBy(bez, bez2){
     // OneToMany
     if(getBeziMult(bez2.mult) == "Many" && getBeziMult(bez.mult) == "One")
-    return `mappedBy = "${bez2.name}"`;
-
+    return `fetch = FetchType.EAGER`;
+    
     // ManyToOne
     if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "Many")
-    return `fetch = FetchType.EAGER`;
+    return `mappedBy = "${bez2.name}"`;
 
     // if(getBeziMult(bez2.mult) == "One" && getBeziMult(bez.mult) == "One") console.log(bez.randomW, bez2.randomW)
     // OneToOne
