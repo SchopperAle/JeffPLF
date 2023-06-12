@@ -20,7 +20,7 @@ app.get("/www/", (req, res) => {
 
 app.post("/gen", (req, res) => {
     console.log(req.body.daten, JSON.stringify(req.body.daten));
-    fs.rmSync("./out", {recursive: true});
+    if(fs.existsSync("./out")) fs.rmSync("./out", {recursive: true});
     fs.mkdirSync("out");
 
     let dat = req.body.daten;
