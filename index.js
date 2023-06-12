@@ -38,7 +38,7 @@ import java.sql.Timestamp;
 `;
 
 txt+=`
-@Entity
+@Entity${getVererbs(klass, dat)}
 public class ${klass.name} ${(klass.vererb == undefined) ? "" : "extends "+klass.vererb+" "}{
     public ${klass.name}() {
 
@@ -88,6 +88,65 @@ fs.writeFileSync("./out/"+klass.name+".java", txt);
     });
 
     // Do moch ma Main
+    let txt = "";
+    txt+=`    
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+`;
+
+txt+=`
+public class Main {
+    private static final String PERSISTENCE_UNIT_NAME = "cool_MySQL";
+    private static EntityManagerFactory factory;
+    
+    public static void main(String[] args) throws Exception {
+        factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
+
+        `;
+
+    dat.forEach((klass) => {
+        txt+=`${klass.name} ${klass.name.toLowerCase()}1 = new ${klass.name}();
+        `;
+        klass.attributen?.forEach(att => {
+            txt +=`${klass.name.toLowerCase()}1.set${capitalizeFirstLetter(att.name)}(${genRandAtt(att)});
+        `;
+        });
+    });
+
+    txt += "\n\t\t";
+
+    dat.forEach((klass) => {
+        console.log(klass);
+        klass.bezi.forEach((bez) => {
+            if(bez.mult.startsWith("1")){
+                txt+=`${klass.name.toLowerCase()}1.set${capitalizeFirstLetter(bez.name)}(${bez.klasse.toLowerCase()}1);
+        `;
+            }
+
+            if(bez.mult.startsWith("*")){
+                txt+=`${klass.name.toLowerCase()}1.get${capitalizeFirstLetter(bez.name)}.add(${bez.klasse.toLowerCase()}1);
+        `;
+            }
+        });
+    });
+
+    dat.forEach((klass) => {
+        txt+=`
+        em.persist(${klass.name.toLowerCase()}1);`;
+    });
+
+    txt+=`
+        em.getTransaction().commit();`;
+
+    txt+="\n\t}\n}\n";
+
+    fs.writeFileSync("./out/Main.java", txt);
+
     
     res.send("DINGS");
 });
@@ -108,6 +167,19 @@ function getType(type) {
     return type;
 }
 
+function genRandAtt(att){
+    if(att.type == "string"){
+        const tmp = ["Dings", "Wurzel", "Ramsi", "Hartmann", "Kek", "Jeff", "Lorem", "Ipsum"];
+        return `"${tmp[Math.floor(Math.random() * tmp.length)]}"`;
+    }
+    if(att.type == "int" || att.type == "long" || att.type == "float"){
+        return Math.floor(Math.random() * 10_000);
+    }
+    if(att.type == "date"){
+        return `new Timestamp(${Math.floor(Math.random() * 1_686_553_410_116)})`;
+    }
+}
+
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -122,7 +194,7 @@ function getBezi(bez, dat){
         });
     });
 
-    console.log(bez, bez2);
+    // console.log(bez, bez2);
     
     let txt = "@";
     txt+= getBeziMult(bez2.mult) + "To" + getBeziMult(bez.mult) + `(${getMappedBy(bez, bez2)})`;
@@ -187,6 +259,18 @@ function getJoinColumns(bez, bez2){
     }
 
     return "";
+}
+
+function getVererbs(klass, dat){
+    let txt = "";
+    dat.forEach(val => {
+        if(val.vererb != undefined && val.vererb == klass.name){
+            txt+=`
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)`;
+        }
+    });
+
+    return txt;
 }
 
 app.listen(settings.port, () => console.log("Listening to port "+settings.port));
