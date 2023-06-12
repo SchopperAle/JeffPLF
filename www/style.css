@@ -1,0 +1,79 @@
+body {
+    margin:0;
+    display: grid;
+    grid-template-areas: "left center center";
+    overflow-y: hidden;
+}
+
+#left {
+    grid-area: left;
+    background-color: red;
+    padding: 2em;
+    display:flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+#center {
+    grid-area: center;
+    background-color: blue;
+    height: 100vh;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+button {
+    font-size: 2em;
+    background-color: darkslategray;
+    color:white;
+    border: 2px white solid
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: white;
+    color:darkslategray;
+}
+
+.klasse {
+    width: fit-content;
+    background-color: white;
+    padding: .5em;
+    border: 3px black solid;
+    color:darkslategray;
+}
+
+.klassenname {
+    font-size: 1em;
+    border-bottom: 2px darkslategray solid;
+}
+
+.selected {
+    background-color: dodgerblue;
+    color:black;
+}
+
+.selectedattribut{
+    background-color: crimson;
+    color:black;
+}
+
+.selectedvererb {
+    background-color: indianred;
+    color:black;
+}
+
+.selectedbezi {
+    background-color: orange;
+    color:black;
+}
+
+.inline {
+    display:inline-block;
+}
+
+.space {
+    margin: 1em;
+}
