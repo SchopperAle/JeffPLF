@@ -90,6 +90,7 @@ fs.writeFileSync("./out/"+klass.name+".java", txt);
     // Do moch ma Main
     let txt = "";
     txt+=`    
+import java.sql.Timestamp;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class Main {
             }
 
             if(bez.mult.startsWith("*")){
-                txt+=`${klass.name.toLowerCase()}1.get${capitalizeFirstLetter(bez.name)}.add(${bez.klasse.toLowerCase()}1);
+                txt+=`${klass.name.toLowerCase()}1.get${capitalizeFirstLetter(bez.name)}().add(${bez.klasse.toLowerCase()}1);
         `;
             }
         });
