@@ -24,13 +24,13 @@ document.getElementById("genClasses").addEventListener("click", () => {
     document.getElementById("center").childNodes.forEach((klass) => {
         klass.childNodes.forEach((val) => {
             if(val.className == "klassenname"){
-                data.push({name:val.innerText, id:klass.id, attributen:[], bezi:[]});
+                data.push({name:val.innerText.replaceAll("\n", ""), id:klass.id, attributen:[], bezi:[]});
                 return;
             }
 
             if(val.className == "klassenattribute"){
                 val.childNodes.forEach((val2) => {
-                    data[data.length-1].attributen.push({name:(val2.childNodes[0].innerText), type:(val2.childNodes[2].innerText)});
+                    data[data.length-1].attributen.push({name:(val2.childNodes[0].innerText).replaceAll("\n", ""), type:(val2.childNodes[2].innerText).replaceAll("\n", "")});
                 });
                 return;
             }
@@ -41,7 +41,7 @@ document.getElementById("genClasses").addEventListener("click", () => {
 
             if(val.className.startsWith("bezi")){
                 console.log(val)
-                data[data.length-1].bezi.push({target:val.getAttribute("data-bezit"), bezi:val.getAttribute("data-bezi"), klasse:val.childNodes[1].innerText, name:val.childNodes[3].innerText, mult:val.childNodes[5].innerText, randomW: Math.floor(Math.random() * 10_000_000)});
+                data[data.length-1].bezi.push({target:val.getAttribute("data-bezit"), bezi:val.getAttribute("data-bezi"), klasse:val.childNodes[1].innerText.replaceAll("\n", ""), name:val.childNodes[3].innerText.replaceAll("\n", ""), mult:val.childNodes[5].innerText.replaceAll("\n", ""), randomW: Math.floor(Math.random() * 10_000_000)});
             }
         })
     })
@@ -50,10 +50,6 @@ document.getElementById("genClasses").addEventListener("click", () => {
     $.post({url:"/gen", data:{daten:JSON.parse(JSON.stringify(data))}, method:"POST"});
     // postn(data);
 });
-
-function postn(data){
-    $.post({url:"/gen", data:{daten:JSON.parse(JSON.stringify(data))}, method:"POST"});
-}
 
 function copy(obj){
     return JSON.parse(JSON.stringify(obj)); 
